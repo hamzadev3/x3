@@ -1,0 +1,34 @@
+import os
+import re
+
+# scan directories and files
+def dir_scan(path):
+    parenthesis_pattern = r'\((\d{5})\)'
+    five_digit_letter_pattern = r'(\d{5})([A-Za-z])'
+    five_digit_pattern = r'\b(\d{5})\b' 
+    for entry in os.scandir(path):
+        basename = os.path.basename(entry.name).lower()
+
+        if entry.is_file():
+            parenthesis_match = re.search(parenthesis_pattern, basename)
+            if parenthesis_match:
+                # parenthesis check
+                print(f"{parenthesis_match.group(1)} {entry.path}")
+                continue  
+
+            five_digit_letter_match = re.search(five_digit_letter_pattern, basename)
+            if five_digit_letter_match:
+                # five digit check
+                print(f"{five_digit_letter_match.group(1)} {entry.path}")
+                continue  
+
+            five_digit_matches = re.findall(five_digit_pattern, basename)
+            if five_digit_matches:
+                print(f"{five_digit_matches[0]} {entry.path}")
+                continue 
+
+        elif entry.is_dir():
+            dir_scan(entry.path)
+
+# Example usage
+dir_scan("I:/DETERMINATIONS/Bronx")
